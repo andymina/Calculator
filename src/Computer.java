@@ -1,58 +1,59 @@
-import javafx.application.*;
-import javafx.event.*;
-import javafx.scene.*;
-import javafx.scene.control.*;
-import javafx.scene.layout.*;
-import javafx.scene.text.*;
-import javafx.stage.*;
 import java.util.ArrayList;
 
 public class Computer {
 	public ArrayList equation = new ArrayList<String>();
-	
+	public String firstNum = "";
+	public String secondNum = "";
+			
 	public String solve() {
-		int operatorCount = 0;
-		int operatorIndex = 0;
 		double answer = 0;
+		String operator = "";
 		
-		String firstNum = "";
-		String secondNum = "";
-		
-		if ((equation.get(0) == "+") || (equation.get(0) == "-") || (equation.get(0) == "*") || (equation.get(0) == "/")) {
+		if (((equation.get(0).equals("+") || equation.get(0).equals("-")) || (equation.get(0).equals("*") || equation.get(0).equals("/")))) {
 			return "0.0";
 		}
 		
-		for (int i = 0; i < equation.size(); i++) {
-			if (equation.get(i) != "+") {
+		int i = 0;
+		while (i < equation.size()) {
+			if (!((equation.get(i).equals("+") || equation.get(i).equals("-")) || (equation.get(i).equals("*") || equation.get(i).equals("/")))) {
 				firstNum += equation.get(i);
+				i++;
 			} else {
+				operator = (equation.get(i)).toString();
 				secondNum = concatenate(secondNum, i, numOfElementsUntilOperator(i, "forwards"));
-				break;
+				
+				double num1 = Double.parseDouble(firstNum);
+				double num2 = Double.parseDouble(secondNum);
+				answer = checkOperator(operator, num1, num2);
+				
+				int upperLimit = i + numOfElementsUntilOperator(i, "forwards");
+				for (int j = upperLimit; j >= 0; j--) {
+					equation.remove(j);
+				}
+				
+				equation.add(0, Double.toString(answer));
+				i = 0;
+				firstNum = "";
+				secondNum = "";
 			}
 		}
 		
-		System.out.println(firstNum);
-		System.out.println(secondNum);
-		double num1 = Double.parseDouble(firstNum);
-		double num2 = Double.parseDouble(secondNum);
-		answer = num1 + num2;
-		
-		equation.clear();
+		firstNum = "";		
 		return Double.toString(answer);
 	}
 	
-	public int numOfElementsUntilOperator(int indexOfOperator, String orientation) {
+	private int numOfElementsUntilOperator(int indexOfOperator, String orientation) {
 		int count = 0;
 		int startingIndex;
 		
-		if (orientation == "forwards") {
+		if (orientation.equals("forwards")) {
 			startingIndex = indexOfOperator + 1;
 		} else {
 			startingIndex = indexOfOperator - 1;
 		}
 		
 		for (int i = startingIndex; i < equation.size(); i++) {
-			if (equation.get(i) != "+") {
+			if (!((equation.get(i) == "+") || (equation.get(i) == "-") || (equation.get(i) == "*") || (equation.get(i) == "/"))) {
 				count++;
 			} else {
 				return count;
@@ -62,7 +63,7 @@ public class Computer {
 		return count;
 	}
 	
-	public String concatenate(String original, int startIndex, int lengthOfDesired) {
+	private String concatenate(String original, int startIndex, int lengthOfDesired) {
 		int index = startIndex + 1;
 		for (int i = lengthOfDesired; i >= 1; i--) {
 			original += equation.get(index);
@@ -70,5 +71,17 @@ public class Computer {
 		}
 		
 		return original;
+	}
+	
+	private double checkOperator(String operatorSign, double numFirst, double numSecond) {
+		if (operatorSign.equals("+")) {
+			return numFirst + numSecond;
+		} else if (operatorSign.equals("-")) {
+			return numFirst - numSecond;
+		} else if (operatorSign.equals("*")) {
+			return numFirst * numSecond;
+		} else {
+			return numFirst / numSecond;
+		}
 	}
 }

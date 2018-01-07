@@ -40,6 +40,12 @@ public class MainWindow extends Application implements EventHandler<ActionEvent>
 		
 		// ---------- Begin Button Section ----------
 		
+			// Clear
+			Button clear = new Button("Clear");
+			clear.setOnAction(this);
+			clear.setPrefSize(100, 100);
+			GridPane.setConstraints(clear, 0, 0);
+		
 			// Zero
 			Button zero = new Button("0");
 			zero.setOnAction(this);
@@ -134,16 +140,19 @@ public class MainWindow extends Application implements EventHandler<ActionEvent>
 			Button divide = new Button("/");
 			divide.setOnAction(this);
 			divide.setPrefSize(100, 100);
+			divide.setId("divide");
 			GridPane.setConstraints(divide, 3, 4);			
 				
 		// ---------- End Button Section ----------
 			
 		answer = new Text("");
 		GridPane.setConstraints(answer, 0, 0, 4, 1);
+		answer.setId("display");
 		
-		grid.getChildren().addAll(zero, one, two, three, four, five, six, seven, eight, nine, comma, add, subtract, multiply, divide, solve, answer);
-		
+		grid.getChildren().addAll(clear, zero, one, two, three, four, five, six, seven, eight, nine, comma, add, subtract, multiply, divide, solve, answer);
+		grid.getStylesheets().add("stylesheet.css");
 		scene = new Scene(grid, 392, 494);
+		scene.getStylesheets().add(getClass().getResource("stylesheet.css").toExternalForm());
 		window.setScene(scene);
 		window.setTitle("Simple Calculator");
 		window.show();
@@ -151,11 +160,15 @@ public class MainWindow extends Application implements EventHandler<ActionEvent>
 	
 	public void handle(ActionEvent event) {
 		String button = ((Button)event.getSource()).getText();
-		if (button.equals("=")) {
-			answer.setText(button);
-			computer.equation.add(button);
+		
+		if (button.equals("Clear")) {
+			computer.equation.clear();
+			answer.setText("0.0");
+		} else if (button.equals("=")) {
+			answer.setText(computer.solve());		
 		} else {
-			answer.setText(computer.solve());
+			answer.setText(button);
+			computer.equation.add(button);	
 		}
 	}
 }
