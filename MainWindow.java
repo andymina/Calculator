@@ -40,7 +40,7 @@ public class MainWindow extends Application implements EventHandler<ActionEvent>
 			Button clear = new Button("Clear");
 			clear.setOnAction(this);
 			clear.setPrefSize(100, 100);
-			GridPane.setConstraints(clear, 0, 0);
+			GridPane.setConstraints(clear, 3, 0);
 
 			// Zero
 			Button zero = new Button("0");
